@@ -14,6 +14,19 @@ async function pollNextAction() {
     if (action.type === 'open_url' && typeof action.url === 'string') {
       await chrome.tabs.create({ url: action.url });
       console.log('Opened URL from companion:', action.url);
+      return;
+    }
+
+    if (action.type === 'close_url' && typeof action.match === 'string') {
+      const tabs = await chrome.tabs.query({});
+      const normalizedMatch = action.match.toLowerCase();
+      const matchedTabs = tabs.filter(tab => typeof tab.url === 'string' && tab.url.toLowerCase().includes(normalizedMatch));
+      if (matchedTabs.length) {
+        await chrome.tabs.remove(matchedTabs.map(tab => tab.id).filter(Boolean));
+        console.log('Closed tabs matching:', action.match);
+      } else {
+        console.log('No open tabs matched:', action.match);
+      }
     }
   } catch (error) {
     console.debug('OpenClaw companion poll failed:', error?.message || error);

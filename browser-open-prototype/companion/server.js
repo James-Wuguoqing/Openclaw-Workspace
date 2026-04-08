@@ -59,24 +59,41 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { ok: true, action });
   }
 
-  if (req.method === 'POST' && req.url === '/open-url') {
+  if (req.method === 'POST' && (req.url === '/open-url' || req.url === '/close-url')) {
     try {
       const raw = await collectBody(req);
       const data = raw ? JSON.parse(raw) : {};
-      const url = typeof data.url === 'string' ? data.url.trim() : '';
 
-      if (!url || !isAllowedHttpUrl(url)) {
-        return sendJson(res, 400, {
-          ok: false,
-          error: 'Only http/https URLs are allowed.'
-        });
+      if (req.url === '/open-url') {
+        const url = typeof data.url === 'string' ? data.url.trim() : '';
+
+        if (!url || !isAllowedHttpUrl(url)) {
+          return sendJson(res, 400, {
+            ok: false,
+            error: 'Only http/https URLs are allowed.'
+          });
+        }
+
+        pendingAction = {
+          type: 'open_url',
+          url,
+          createdAt: new Date().toISOString()
+        };
+      } else {
+        const match = typeof data.match === 'string' ? data.match.trim() : '';
+        if (!match) {
+          return sendJson(res, 400, {
+            ok: false,
+            error: 'A non-empty match string is required.'
+          });
+        }
+
+        pendingAction = {
+          type: 'close_url',
+          match,
+          createdAt: new Date().toISOString()
+        };
       }
-
-      pendingAction = {
-        type: 'open_url',
-        url,
-        createdAt: new Date().toISOString()
-      };
 
       return sendJson(res, 200, {
         ok: true,

@@ -9,8 +9,9 @@
 
 ## 能力范围
 
-当前只支持：
+当前支持：
 - 打开 `http://` / `https://` URL
+- 按 URL 片段或域名关闭已打开标签
 
 默认安全限制：
 - 拒绝 `file:` / `javascript:` / `data:` 等协议
@@ -82,16 +83,22 @@ curl http://127.0.0.1:3210/next-action
 
 ## 命令入口
 
-### Node 版本
-```bash
-cd browser-open-prototype/companion
-node open_url.js https://www.jd.com
-```
-
-### Shell 命令版本
+### 打开网页
 ```bash
 cd browser-open-prototype/companion
 ./open_url https://www.jd.com
+```
+
+### 关闭匹配网页
+```bash
+cd browser-open-prototype/companion
+./close_url amazon.com
+```
+
+也可以用 Node 版本：
+```bash
+node open_url.js https://www.jd.com
+node close_url.js amazon.com
 ```
 
 如果 companion 没启动，会直接报错提醒。
