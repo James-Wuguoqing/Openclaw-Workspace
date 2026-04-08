@@ -28,7 +28,14 @@ node server.js
 
 ## 手动测试
 
-提交一个打开请求：
+提交一个打开请求（推荐用本地命令入口）：
+
+```bash
+cd browser-open-prototype/companion
+node open_url.js https://www.jd.com
+```
+
+也可以直接用 curl：
 
 ```bash
 curl -X POST http://127.0.0.1:3210/open-url \
@@ -55,6 +62,15 @@ curl http://127.0.0.1:3210/next-action
 - 扩展每 2 秒轮询一次 `http://127.0.0.1:3210/next-action`
 - 如果拿到 `{ type: "open_url", url: ... }`
 - 就调用浏览器标签页 API 新开网页
+
+## 命令入口
+
+```bash
+cd browser-open-prototype/companion
+node open_url.js https://www.jd.com
+```
+
+如果 companion 没启动，会直接报错提醒。
 
 ## 下一步可扩展
 
