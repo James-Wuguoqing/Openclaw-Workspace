@@ -2,6 +2,18 @@ const POLL_ALARM = 'poll-openclaw-companion';
 const POLL_INTERVAL_MINUTES = 0.033; // ~2 seconds
 const BASE_URL = 'http://127.0.0.1:3210';
 
+async function reportResult(payload) {
+  try {
+    await fetch(`${BASE_URL}/report-result`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.debug('Failed to report companion result:', error?.message || error);
+  }
+}
+
 async function pollNextAction() {
   try {
     const response = await fetch(`${BASE_URL}/next-action`, { cache: 'no-store' });
@@ -13,6 +25,12 @@ async function pollNextAction() {
 
     if (action.type === 'open_url' && typeof action.url === 'string') {
       await chrome.tabs.create({ url: action.url });
+      await reportResult({
+        actionType: 'open_url',
+        ok: true,
+        url: action.url,
+        status: 'opened'
+      });
       console.log('Opened URL from companion:', action.url);
       return;
     }
@@ -21,10 +39,27 @@ async function pollNextAction() {
       const tabs = await chrome.tabs.query({});
       const normalizedMatch = action.match.toLowerCase();
       const matchedTabs = tabs.filter(tab => typeof tab.url === 'string' && tab.url.toLowerCase().includes(normalizedMatch));
+      const matchedUrls = matchedTabs.map(tab => tab.url).filter(Boolean);
       if (matchedTabs.length) {
         await chrome.tabs.remove(matchedTabs.map(tab => tab.id).filter(Boolean));
+        await reportResult({
+          actionType: 'close_url',
+          ok: true,
+          match: action.match,
+          status: 'closed',
+          closedCount: matchedTabs.length,
+          matchedUrls
+        });
         console.log('Closed tabs matching:', action.match);
       } else {
+        await reportResult({
+          actionType: 'close_url',
+          ok: false,
+          match: action.match,
+          status: 'no_match',
+          closedCount: 0,
+          matchedUrls: []
+        });
         console.log('No open tabs matched:', action.match);
       }
     }

@@ -67,6 +67,12 @@ curl -X POST http://127.0.0.1:3210/open-url \
 curl http://127.0.0.1:3210/next-action
 ```
 
+查看最近一次执行结果：
+
+```bash
+curl http://127.0.0.1:3210/last-result
+```
+
 ## 安装扩展
 
 1. 打开 Chrome / Edge
@@ -95,10 +101,17 @@ cd browser-open-prototype/companion
 ./close_url amazon.com
 ```
 
+### 查看最近一次执行结果
+```bash
+cd browser-open-prototype/companion
+./last_result
+```
+
 也可以用 Node 版本：
 ```bash
 node open_url.js https://www.jd.com
 node close_url.js amazon.com
+node last_result.js
 ```
 
 如果 companion 没启动，会直接报错提醒。

@@ -5,6 +5,7 @@ const HOST = '127.0.0.1';
 const PORT = 3210;
 
 let pendingAction = null;
+let lastResult = null;
 
 function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
@@ -46,7 +47,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && req.url === '/health') {
-    return sendJson(res, 200, { ok: true, pending: !!pendingAction });
+    return sendJson(res, 200, { ok: true, pending: !!pendingAction, hasResult: !!lastResult });
   }
 
   if (req.method === 'GET' && req.url === '/next-action') {
@@ -57,6 +58,27 @@ const server = http.createServer(async (req, res) => {
     const action = pendingAction;
     pendingAction = null;
     return sendJson(res, 200, { ok: true, action });
+  }
+
+  if (req.method === 'GET' && req.url === '/last-result') {
+    return sendJson(res, 200, { ok: true, result: lastResult });
+  }
+
+  if (req.method === 'POST' && req.url === '/report-result') {
+    try {
+      const raw = await collectBody(req);
+      const data = raw ? JSON.parse(raw) : {};
+      lastResult = {
+        reportedAt: new Date().toISOString(),
+        ...data
+      };
+      return sendJson(res, 200, { ok: true, stored: true, result: lastResult });
+    } catch (error) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: error.message || 'Invalid request body'
+      });
+    }
   }
 
   if (req.method === 'POST' && (req.url === '/open-url' || req.url === '/close-url')) {
