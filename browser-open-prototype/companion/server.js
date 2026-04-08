@@ -64,6 +64,14 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { ok: true, result: lastResult });
   }
 
+  if (req.method === 'POST' && req.url === '/list-tabs') {
+    pendingAction = {
+      type: 'list_tabs',
+      createdAt: new Date().toISOString()
+    };
+    return sendJson(res, 200, { ok: true, queued: true, action: pendingAction });
+  }
+
   if (req.method === 'POST' && req.url === '/report-result') {
     try {
       const raw = await collectBody(req);

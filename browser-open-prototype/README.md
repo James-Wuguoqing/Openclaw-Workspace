@@ -12,6 +12,7 @@
 当前支持：
 - 打开 `http://` / `https://` URL
 - 按 URL 片段或域名关闭已打开标签
+- 列出当前浏览器窗口和标签页
 
 默认安全限制：
 - 拒绝 `file:` / `javascript:` / `data:` 等协议
@@ -101,6 +102,12 @@ cd browser-open-prototype/companion
 ./close_url amazon.com
 ```
 
+### 列出当前窗口和标签
+```bash
+cd browser-open-prototype/companion
+./list_tabs
+```
+
 ### 查看最近一次执行结果
 ```bash
 cd browser-open-prototype/companion
@@ -111,6 +118,7 @@ cd browser-open-prototype/companion
 ```bash
 node open_url.js https://www.jd.com
 node close_url.js amazon.com
+node list_tabs.js
 node last_result.js
 ```
 

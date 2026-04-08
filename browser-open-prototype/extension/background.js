@@ -62,6 +62,30 @@ async function pollNextAction() {
         });
         console.log('No open tabs matched:', action.match);
       }
+      return;
+    }
+
+    if (action.type === 'list_tabs') {
+      const windows = await chrome.windows.getAll({ populate: true });
+      const resultWindows = windows.map((win) => ({
+        windowId: win.id,
+        focused: !!win.focused,
+        tabs: (win.tabs || []).map((tab) => ({
+          id: tab.id,
+          title: tab.title || '',
+          url: tab.url || '',
+          active: !!tab.active
+        }))
+      }));
+      await reportResult({
+        actionType: 'list_tabs',
+        ok: true,
+        status: 'listed',
+        windowCount: resultWindows.length,
+        tabCount: resultWindows.reduce((sum, win) => sum + win.tabs.length, 0),
+        windows: resultWindows
+      });
+      console.log('Reported open windows/tabs');
     }
   } catch (error) {
     console.debug('OpenClaw companion poll failed:', error?.message || error);
