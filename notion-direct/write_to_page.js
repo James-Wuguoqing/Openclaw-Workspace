@@ -65,7 +65,16 @@ async function main() {
     children: paragraphs
   });
 
-  console.log('Created page:', response.url);
+  const reportDateMatch = title.match(/\d{4}-\d{2}-\d{2}/);
+  const reportDate = reportDateMatch ? reportDateMatch[0] : '';
+  const details = [
+    'Notion 写入成功',
+    `标题：${title}`,
+    reportDate ? `日期：${reportDate}` : null,
+    `页面链接：${response.url}`
+  ].filter(Boolean);
+
+  console.log(details.join('\n'));
 }
 
 main().catch((err) => {
