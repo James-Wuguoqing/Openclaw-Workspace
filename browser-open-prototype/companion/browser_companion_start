@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PID_FILE="$SCRIPT_DIR/companion.pid"
+LOG_FILE="$SCRIPT_DIR/companion.log"
+
+if [ -f "$PID_FILE" ]; then
+  PID="$(cat "$PID_FILE")"
+  if kill -0 "$PID" 2>/dev/null; then
+    echo "browser companion already running (pid=$PID)"
+    exit 0
+  else
+    rm -f "$PID_FILE"
+  fi
+fi
+
+nohup node "$SCRIPT_DIR/server.js" >> "$LOG_FILE" 2>&1 &
+PID=$!
+echo "$PID" > "$PID_FILE"
+sleep 1
+
+if kill -0 "$PID" 2>/dev/null; then
+  echo "browser companion started (pid=$PID)"
+  echo "log: $LOG_FILE"
+else
+  echo "failed to start browser companion"
+  exit 1
+fi

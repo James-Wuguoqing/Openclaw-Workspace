@@ -18,9 +18,26 @@
 
 ## Companion 启动
 
+### 前台启动
 ```bash
 cd browser-open-prototype/companion
 node server.js
+```
+
+### 后台常驻启动
+```bash
+cd browser-open-prototype/companion
+./browser_companion_start
+```
+
+查看状态：
+```bash
+./browser_companion_status
+```
+
+停止：
+```bash
+./browser_companion_stop
 ```
 
 默认监听：

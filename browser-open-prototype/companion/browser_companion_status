@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PID_FILE="$SCRIPT_DIR/companion.pid"
+LOG_FILE="$SCRIPT_DIR/companion.log"
+
+if [ ! -f "$PID_FILE" ]; then
+  echo "browser companion: stopped"
+  exit 0
+fi
+
+PID="$(cat "$PID_FILE")"
+if kill -0 "$PID" 2>/dev/null; then
+  echo "browser companion: running (pid=$PID)"
+  echo "log: $LOG_FILE"
+else
+  echo "browser companion: not running (stale pid file)"
+fi
