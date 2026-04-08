@@ -45,3 +45,4 @@ Add whatever helps you do your job. This is your cheat sheet.
 - Backed by: `browser-open-prototype/companion/open_url`
 - Requires local companion server + browser extension to be running
 - Current scope: opens `http/https` URLs in a new browser tab
+- Behavior rule: when James asks to open a website/webpage and browser companion is available, prefer `open_url` over replying with only a clickable link
