@@ -1,0 +1,22 @@
+# Local/runtime state
+.openclaw/
+.clawhub/
+
+# Dependencies
+node_modules/
+notion-direct/node_modules/
+
+# Logs / temp
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Optional editor noise
+.vscode/
+.idea/
