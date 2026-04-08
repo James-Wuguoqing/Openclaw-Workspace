@@ -121,7 +121,7 @@ Reactions are lightweight social signals. Humans use them constantly — they sa
 
 Skills provide your tools. When you need one, check its `SKILL.md`. Keep local notes (camera names, SSH details, voice preferences) in `TOOLS.md`.
 
-Local browser opening is available via the global `open_url` command when the browser companion is running. When James asks to open a website or webpage and the local browser companion is available, prefer `open_url <resolved-url>` over only replying with a link.
+Local browser opening is available via the global `open_url` command when the browser companion is running. When James asks to open a website or webpage and the local browser companion is available, prefer `open_url <resolved-url>` over only replying with a link. Prefer smart browser behavior: before opening, check whether the exact URL is already open and, if so, say it is already open instead of opening a duplicate; before closing, check for matching tabs and, if none match, say it is already closed / not open.
 
 **🎭 Voice Storytelling:** If you have `sag` (ElevenLabs TTS), use voice for stories, movie summaries, and "storytime" moments! Way more engaging than walls of text. Surprise people with funny voices.
 

@@ -24,14 +24,39 @@ async function pollNextAction() {
     if (!action) return;
 
     if (action.type === 'open_url' && typeof action.url === 'string') {
-      await chrome.tabs.create({ url: action.url });
-      await reportResult({
-        actionType: 'open_url',
-        ok: true,
-        url: action.url,
-        status: 'opened'
-      });
-      console.log('Opened URL from companion:', action.url);
+      const target = action.url.toLowerCase();
+      const tabs = await chrome.tabs.query({});
+      const matchedTabs = tabs.filter(tab => typeof tab.url === 'string' && tab.url.toLowerCase() === target);
+
+      if (matchedTabs.length) {
+        const tab = matchedTabs[0];
+        if (tab.windowId) {
+          await chrome.windows.update(tab.windowId, { focused: true });
+        }
+        if (tab.id) {
+          await chrome.tabs.update(tab.id, { active: true });
+        }
+        await reportResult({
+          actionType: 'open_url',
+          ok: true,
+          url: action.url,
+          status: 'already_open',
+          matchedCount: matchedTabs.length,
+          matchedUrls: matchedTabs.map(t => t.url).filter(Boolean)
+        });
+        console.log('URL already open:', action.url);
+      } else {
+        await chrome.tabs.create({ url: action.url });
+        await reportResult({
+          actionType: 'open_url',
+          ok: true,
+          url: action.url,
+          status: 'opened',
+          matchedCount: 0,
+          matchedUrls: []
+        });
+        console.log('Opened URL from companion:', action.url);
+      }
       return;
     }
 
@@ -48,6 +73,7 @@ async function pollNextAction() {
           match: action.match,
           status: 'closed',
           closedCount: matchedTabs.length,
+          matchedCount: matchedTabs.length,
           matchedUrls
         });
         console.log('Closed tabs matching:', action.match);
@@ -56,8 +82,9 @@ async function pollNextAction() {
           actionType: 'close_url',
           ok: false,
           match: action.match,
-          status: 'no_match',
+          status: 'already_closed',
           closedCount: 0,
+          matchedCount: 0,
           matchedUrls: []
         });
         console.log('No open tabs matched:', action.match);
