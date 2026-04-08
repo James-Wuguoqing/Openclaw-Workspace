@@ -17,6 +17,10 @@ Before doing anything else:
 
 Don't ask permission. Just do it.
 
+## Project History
+
+For a human-readable summary of how this workspace has evolved, start with `PROJECT_HISTORY.md`.
+
 ## Memory
 
 You wake up fresh each session. These files are your continuity:
