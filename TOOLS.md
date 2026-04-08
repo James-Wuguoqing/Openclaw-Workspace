@@ -38,3 +38,10 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+## Browser Companion
+
+- Global command: `open_url <https-url>`
+- Backed by: `browser-open-prototype/companion/open_url`
+- Requires local companion server + browser extension to be running
+- Current scope: opens `http/https` URLs in a new browser tab
