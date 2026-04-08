@@ -65,9 +65,16 @@ curl http://127.0.0.1:3210/next-action
 
 ## 命令入口
 
+### Node 版本
 ```bash
 cd browser-open-prototype/companion
 node open_url.js https://www.jd.com
+```
+
+### Shell 命令版本
+```bash
+cd browser-open-prototype/companion
+./open_url https://www.jd.com
 ```
 
 如果 companion 没启动，会直接报错提醒。
