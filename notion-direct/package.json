@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "scripts": {
+    "save:brief": "node write_structured_page.js sample_news.json",
+    "save:quick": "node quick_save_news.js"
+  },
   "dependencies": {
     "@notionhq/client": "^2.2.15"
   }

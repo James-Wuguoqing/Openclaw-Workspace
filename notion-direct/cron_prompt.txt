@@ -1,0 +1,18 @@
+每天早上 7 点，生成当天最重要的 5 条财经消息，要求内容适合微信阅读，语言简洁、信息密度高。
+
+执行步骤：
+1. 先基于可靠来源整理当天 5 条最重要财经消息。
+2. 生成一个结构化 JSON 文件，覆盖写入 /home/james/.openclaw/workspace/notion-direct/sample_news.json
+3. JSON 格式必须符合 /home/james/.openclaw/workspace/notion-direct/write_structured_page.js 的输入要求，包含：
+   - title
+   - summary
+   - items（5条）
+   - 每条包含 title / summary / details / impact
+4. 然后在目录 /home/james/.openclaw/workspace/notion-direct 下执行：
+   npm run save:brief
+5. 最后输出一版适合微信直接发送的“今日财经 Top 5”。
+
+要求：
+- Notion 写入失败时，要在回复里明确说明失败原因。
+- 如果新闻来源不足，不要编造；明确说信息不足。
+- 输出给微信的版本要简洁，不要输出 JSON 原文。

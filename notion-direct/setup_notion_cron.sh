@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+JOB_NAME="am-stock-macro-notion-save"
+TZ_NAME="Asia/Taipei"
+CRON_EXPR="0 7 * * *"
+WORKDIR="/home/james/.openclaw/workspace/notion-direct"
+PROMPT_FILE="$WORKDIR/cron_notion_message.txt"
+
+mkdir -p "$WORKDIR"
+
+cat > "$PROMPT_FILE" <<'EOF'
+每天早上 7 点执行以下任务：
+
+基于当天可靠、可核实的财经信息源，整理今天最重要的 5 条财经消息，并将其写入 Notion。此任务不负责微信推送，只负责 Notion 落库。
+
+执行步骤：
+
+1. 整理当天最重要的 5 条财经消息，内容使用中文。
+2. 生成一个结构化 JSON 文件，覆盖写入：
+   /home/james/.openclaw/workspace/notion-direct/sample_news.json
+
+3. JSON 必须严格符合以下结构：
+{
+  "title": "YYYY-MM-DD 07:00 财经早报 Top 5",
+  "summary": "今天财经市场的总体概览。",
+  "items": [
+    {
+      "title": "新闻标题",
+      "summary": "一句话摘要",
+      "details": "较详细说明",
+      "impact": "对市场或资产价格的影响"
+    }
+  ]
+}
+
+要求：
+- items 必须正好包含 5 条
+- 每条必须包含 title、summary、details、impact
+- 内容必须真实、可核实，不要编造
+- 如果信息不足，明确说明，不要硬凑
+
+4. 写完 JSON 后，在以下目录执行命令：
+   工作目录：/home/james/.openclaw/workspace/notion-direct
+   执行命令：npm run save:brief
+
+5. 如果写入失败，明确说明失败原因。
+6. 最终输出一条简短确认信息，例如：
+   今日财经 Top 5 已写入 Notion。
+EOF
+
+if openclaw cron list | grep -Fq "$JOB_NAME"; then
+  echo "Cron job already exists: $JOB_NAME"
+  echo "If you want to recreate it, remove the old one first:"
+  echo "  openclaw cron rm <job-id>"
+  exit 0
+fi
+
+openclaw cron add \
+  --name "$JOB_NAME" \
+  --cron "$CRON_EXPR" \
+  --tz "$TZ_NAME" \
+  --session isolated \
+  --tools exec,read,write \
+  --message "$(cat "$PROMPT_FILE")" \
+  --expect-final
+
+echo "Done. Cron job created: $JOB_NAME"
+echo "Check with: openclaw cron list"
